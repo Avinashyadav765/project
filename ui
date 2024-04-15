@@ -1,0 +1,91 @@
+import subprocess
+
+from PIL import ImageTk
+import tkinter as tk
+from tkinter import messagebox
+from PIL import ImageTk, Image
+
+
+class PythonFileRunnerApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Hand Gesture Recognition")
+        self.master.geometry("800x600")
+        self.master.state("zoomed")
+# Load background image
+        color1 = "#020f12"
+        color2 = "#05d7ff"
+        color3 = "#65e7ff"
+        color4 = "BLACK"
+        self.bg_image = ImageTk.PhotoImage(Image.open("C:/Users/HP LAPTOP/PycharmProjects  HandGestures/HandGestures/bg image.png"))
+        self.bg_label = tk.Label(self.master, image=self.bg_image)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.project_label = tk.Label(self.master, text="Hand Gesture Recognition", bg="white",
+                                      font=("Helvetica", 40))
+        self.project_label.pack()
+        # Transparent login frame
+        self.login_frame = tk.Frame(self.master)
+        self.login_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.login_label = tk.Label(self.login_frame,height=1,width=10,border=0, text="Login:",font=("Helvetica"))
+        self.login_label.grid(row=0, column=0, padx=10, pady=5)
+        self.login_entry = tk.Entry(self.login_frame)
+        self.login_entry.grid(row=0, column=1, padx=10, pady=5)
+
+        self.password_label = tk.Label(self.login_frame,height=1,width=10,border=0, text="Password:",font=("Helvetica"))
+        self.password_label.grid(row=1, column=0, padx=10, pady=5)
+        self.password_entry = tk.Entry(self.login_frame, show="*")
+        self.password_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        self.login_button = tk.Button(self.login_frame,background="#007bff",foreground="#ffffff",activebackground=color3,activeforeground=color4,highlightthickness=2,highlightbackground=color2,highlightcolor="WHITE",height=1,width=10,border=0,font=("Arial",16,"bold"), text="Login", command=self.login,)
+        self.login_button.grid(row=2, columnspan=2, pady=10)
+
+    def login(self):
+        username = self.login_entry.get()
+        password = self.password_entry.get()
+        # Add authentication logic here
+        if username == "admin" and password == "admin123":
+            self.login_frame.destroy()
+            self.show_files_page()
+        else:
+            tk.messagebox.showerror("Login Failed", "Invalid username or password.")
+
+    def show_files_page(self):
+        self.files_frame = tk.Toplevel(self.master)
+        #self.files_frame.place(relx=0.5, rely=0.5, anchor="left")
+        self.files_frame.geometry("500x600")
+      #  self.files_frame.state("zoomed")
+        self.files_frame.attributes('-transparentcolor', 'red')
+        self.files_frame.config(bg='red')
+        color1 = "#020f12"
+        color2 = "#05d7ff"
+        color3 = "#65e7ff"
+        color4 = "BLACK"
+
+        self.file_list = ["Mouse control.py", "Keyboard control.py", "Presentation.py", "Volume control.py"]
+        self.processes = []
+
+        # Create buttons for each file
+        self.buttons = []
+        for file in self.file_list:
+            btn = tk.Button(self.files_frame,text=f"{file}", background=color2,foreground=color4,activebackground=color3,activeforeground=color4,highlightthickness=2,highlightbackground=color2,highlightcolor="WHITE",height=2,width=20,border=0,font=("Arial",16,"bold") ,command=lambda f=file: self.run_file(f))
+            btn.pack(pady=5)
+            self.buttons.append(btn)
+
+        # Create a Stop button
+        self.btn_stop = tk.Button(self.files_frame,text="Stop",height=2,width=15,border=0,font=("Arial",16,"bold"), command=self.stop_execution, bg="#dc3545", fg="#ffffff")
+        self.btn_stop.pack(pady=10)
+
+    def run_file(self, filename):
+        process = subprocess.Popen(["python", filename])
+        self.processes.append(process)
+
+    def stop_execution(self):
+        for process in self.processes:
+            process.terminate()
+        self.master.destroy()
+
+if __name__ == "__main__":
+    root = tk.Tkany()
+    app = PythonFileRunnerApp(root)
+    root.mainloop()
